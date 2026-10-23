@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: policyflow
+    runtime: docker
+    plan: free
+    region: oregon
+    healthCheckPath: /up
+    envVars:
+      - key: APP_NAME
+        value: PolicyFlow
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        generateValue: true
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DATABASE_URL
+        fromDatabase:
+          name: policyflow-db
+          property: connectionString
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: CACHE_STORE
+        value: database
+      - key: SESSION_DRIVER
+        value: database
+
+databases:
+  - name: policyflow-db
+    plan: free
+    region: oregon
+    databaseName: policyflow
+    user: policyflow
