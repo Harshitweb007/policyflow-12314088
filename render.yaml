@@ -23,9 +23,9 @@ services:
       - key: LOG_CHANNEL
         value: stderr
       - key: CACHE_STORE
-        value: database
+        value: file
       - key: SESSION_DRIVER
-        value: database
+        value: cookie
 
 databases:
   - name: policyflow-db

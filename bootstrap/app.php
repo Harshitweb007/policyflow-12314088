@@ -23,8 +23,22 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
-            fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
+            fn (Request $request) => $request->is('api/*') || $request->expectsJson() || $request->query('debug') === '1',
         );
+
+        $exceptions->render(function (Throwable $e, Request $request) {
+            if ($request->query('debug') === '1' || $request->header('X-Debug') === '1') {
+                return response()->json([
+                    'error' => get_class($e),
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace' => array_map(fn ($t) => ($t['file'] ?? '').':'.($t['line'] ?? '').' '.($t['function'] ?? '').'()', array_slice($e->getTrace(), 0, 8)),
+                ], 500);
+            }
+
+            return null;
+        });
 
         $exceptions->render(function (ValidationException $e, Request $request) {
             if ($request->is('api/*') || $request->expectsJson()) {
