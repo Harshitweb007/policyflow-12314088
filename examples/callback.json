@@ -1,0 +1,8 @@
+{
+  "provider_event_id": "evt-001",
+  "provider_reference": "PRV-REPLACE-ME",
+  "policy_request_id": "00000000-0000-0000-0000-000000000000",
+  "event_type": "ISSUED",
+  "policy_number": "POL-FROM-CALLBACK",
+  "occurred_at": "2026-10-23T12:00:00+00:00"
+}
