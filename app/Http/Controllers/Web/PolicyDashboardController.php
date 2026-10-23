@@ -17,50 +17,30 @@ use Illuminate\Http\Request;
 
 class PolicyDashboardController extends Controller
 {
-    public function index(): mixed
+    public function index(): View
     {
-        try {
-            $total = PolicyRequest::query()->count();
-            $issued = PolicyRequest::query()->where('state', PolicyState::Issued)->count();
-            $pending = PolicyRequest::query()->whereIn('state', [
-                PolicyState::PendingConfirmation,
-                PolicyState::NeedsReconciliation,
-            ])->count();
-            $failed = PolicyRequest::query()->where('state', PolicyState::Failed)->count();
+        $total = PolicyRequest::query()->count();
+        $issued = PolicyRequest::query()->where('state', PolicyState::Issued)->count();
+        $pending = PolicyRequest::query()->whereIn('state', [
+            PolicyState::PendingConfirmation,
+            PolicyState::NeedsReconciliation,
+        ])->count();
+        $failed = PolicyRequest::query()->where('state', PolicyState::Failed)->count();
 
-            $recentRequests = PolicyRequest::query()->latest('id')->limit(8)->get();
-            $recentHistory = PolicyStateHistory::query()->with('policyRequest')->latest('id')->limit(6)->get();
+        $recentRequests = PolicyRequest::query()->latest('id')->limit(8)->get();
+        $recentHistory = PolicyStateHistory::query()->with('policyRequest')->latest('id')->limit(6)->get();
 
-            return view('dashboard.index', compact('total', 'issued', 'pending', 'failed', 'recentRequests', 'recentHistory'));
-        } catch (\Throwable $e) {
-            return response()->json([
-                'error' => get_class($e),
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => array_slice($e->getTrace(), 0, 5),
-            ], 500);
-        }
+        return view('dashboard.index', compact('total', 'issued', 'pending', 'failed', 'recentRequests', 'recentHistory'));
     }
 
-    public function intake(): mixed
+    public function intake(): View
     {
-        try {
-            return view('dashboard.intake', [
-                'plans' => PlanCode::cases(),
-                'destinations' => Destination::cases(),
-                'coverages' => CoverageAmount::cases(),
-                'scenarios' => MockScenario::cases(),
-            ]);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'error' => get_class($e),
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => array_slice($e->getTrace(), 0, 5),
-            ], 500);
-        }
+        return view('dashboard.intake', [
+            'plans' => PlanCode::cases(),
+            'destinations' => Destination::cases(),
+            'coverages' => CoverageAmount::cases(),
+            'scenarios' => MockScenario::cases(),
+        ]);
     }
 
     public function list(Request $request): View
