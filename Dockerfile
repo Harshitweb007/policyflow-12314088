@@ -1,4 +1,4 @@
-FROM php:8.3-apache
+FROM php:8.4-apache
 
 # Install system dependencies and required PHP extensions
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -9,11 +9,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxml2-dev \
     libpq-dev \
     libzip-dev \
+    libicu-dev \
     zip \
     unzip \
     sqlite3 \
     libsqlite3-dev \
-    && docker-php-ext-install pdo pdo_pgsql pdo_mysql pdo_sqlite bcmath zip opcache pcntl \
+    && docker-php-ext-install pdo pdo_pgsql pdo_mysql pdo_sqlite bcmath zip intl opcache pcntl \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
